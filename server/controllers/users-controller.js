@@ -1,4 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
+const { validationResult } = require("express-validator");
+
 const HttpError = require("../models/http-error");
 
 const DUMMY_USERS = [
@@ -26,9 +28,19 @@ const getAllUsers = (req, res, next) => {
 // Register a user
 // METHOD: POST
 const signup = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    throw new HttpError(
+      "Invalid input. Please add name, valid email, and password with minimum 6 characters.",
+      422
+    );
+  }
+
   const { name, email, password } = req.body;
 
-  const user = DUMMY_USERS.find(user => user.email === email);
+  const user = DUMMY_USERS.find((user) => user.email === email);
 
   if (user) {
     throw new HttpError("User already exists.", 422);
