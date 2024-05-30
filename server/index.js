@@ -1,6 +1,7 @@
 const express = require("express");
 
 const placesRoutes = require('./routes/places-routes.js');
+const usersRoutes = require('./routes/users-routes.js');
 const HttpError = require("./models/http-error.js");
 
 const app = express();
@@ -12,6 +13,8 @@ app.use(express.json());
 
 // Route Middleware
 app.use("/api/places", placesRoutes);
+
+app.use("/api/users", usersRoutes);
 
 
 
