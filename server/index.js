@@ -1,7 +1,9 @@
 const express = require("express");
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-const placesRoutes = require('./routes/places-routes.js');
-const usersRoutes = require('./routes/users-routes.js');
+const placesRoutes = require("./routes/places-routes.js");
+const usersRoutes = require("./routes/users-routes.js");
 const HttpError = require("./models/http-error.js");
 
 const app = express();
@@ -16,23 +18,23 @@ app.use("/api/places", placesRoutes);
 
 app.use("/api/users", usersRoutes);
 
-
-
 // Error Middleware
 app.use((req, res, next) => {
-    const error = new HttpError('Could not find this route.', 404);
-    throw error;
+  const error = new HttpError("Could not find this route.", 404);
+  throw error;
 });
 
 app.use((error, req, res, next) => {
-    if (res.headerSent) {
-        return next(error);
-    }
+  if (res.headerSent) {
+    return next(error);
+  }
 
-    res.status(error.code || 500)
-    res.json({message: error.message || 'An unknown error occured.'})
-})
+  res.status(error.code || 500);
+  res.json({ message: error.message || "An unknown error occured." });
+});
 
-
-
-app.listen(5000);
+mongoose
+  .connect(process.env.URI)
+  .then(() => console.log("Database connected!"))
+  .then(() => app.listen(5000, console.log("Server connected at PORT 5000!")))
+  .catch((error) => console.log(error));

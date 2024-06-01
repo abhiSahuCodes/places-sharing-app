@@ -1,2 +1,4 @@
 node_modules/
 readit.md
+mongodb-credentials.md
+.env
