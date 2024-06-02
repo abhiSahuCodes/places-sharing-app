@@ -9,11 +9,11 @@ const User = require("../models/user-model");
 const getAllUsers = async (req, res, next) => {
   let users;
   try {
-    users = await User.find();
+    users = await User.find({}, '-password');
   } catch (error) {
     return next(error);
   }
-  res.status(200).json({ users });
+  res.status(200).json({ users: users });
 };
 
 // Register a user
@@ -65,17 +65,23 @@ const signup = async (req, res, next) => {
 
 // Login a user
 // METHOD: POST
-const login = (req, res, next) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
-  const user = DUMMY_USERS.find((user) => user.email === email);
+  let existingUser;
 
-  if (!user) {
-    throw new HttpError("User with this email is not found.", 401);
+  try {
+    existingUser = await User.findOne({ email });
+  } catch (error) {
+    return next(error);
   }
 
-  if (!(user.password === password)) {
-    throw new HttpError("Invalid password", 404);
+  if (!existingUser) {
+    return next(new HttpError("User with this email is not found.", 401));
+  }
+
+  if (!(existingUser.password === password)) {
+    return next(new HttpError("Invalid password", 404));
   }
 
   res.status(200).json({ message: "User loggedin", user: { email } });
