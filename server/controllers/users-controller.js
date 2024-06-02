@@ -1,59 +1,65 @@
-const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
-
-const DUMMY_USERS = [
-  {
-    id: "u1",
-    name: "Abhishek Sahu",
-    email: "abhishek@gmail.com",
-    password: "testing123",
-  },
-  {
-    id: "u2",
-    name: "Rohan Sahu",
-    email: "rohan@gmail.com",
-    password: "testing456",
-  },
-];
+const User = require("../models/user-model");
 
 // Get all users
 // METHOD: GET
 
-const getAllUsers = (req, res, next) => {
-  res.status(200).json({ users: DUMMY_USERS });
+const getAllUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find();
+  } catch (error) {
+    return next(error);
+  }
+  res.status(200).json({ users });
 };
 
 // Register a user
 // METHOD: POST
-const signup = (req, res, next) => {
+const signup = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     console.log(errors);
-    throw new HttpError(
-      "Invalid input. Please add name, valid email, and password with minimum 6 characters.",
-      422
+    return next(
+      new HttpError(
+        "Invalid input. Please add name, valid email, and password with minimum 6 characters.",
+        422
+      )
     );
   }
 
-  const { name, email, password } = req.body;
+  const { name, email, password, places } = req.body;
 
-  const user = DUMMY_USERS.find((user) => user.email === email);
+  let user;
+
+  try {
+    user = await User.findOne({ email });
+  } catch (error) {
+    return next(error);
+  }
 
   if (user) {
     throw new HttpError("User already exists.", 422);
   }
 
-  const createdUser = {
-    id: uuidv4(),
+  const createdUser = new User({
     name,
     email,
+    image: "https://i.ibb.co/q5zbhJG/prof-place-sharing.png",
     password,
-  };
+    places,
+  });
 
-  DUMMY_USERS.push(createdUser);
+  try {
+    await createdUser.save();
+  } catch (error) {
+    new HttpError("Failed to signup. Please try again later.", 500);
+    return next(error);
+  }
+
   res.status(201).json({ message: "User created", user: createdUser });
 };
 
