@@ -9,7 +9,7 @@ const User = require("../models/user-model");
 const getAllUsers = async (req, res, next) => {
   let users;
   try {
-    users = await User.find({}, '-password');
+    users = await User.find({}, "-password");
   } catch (error) {
     return next(error);
   }
@@ -31,7 +31,7 @@ const signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let user;
 
@@ -50,7 +50,7 @@ const signup = async (req, res, next) => {
     email,
     image: "https://i.ibb.co/q5zbhJG/prof-place-sharing.png",
     password,
-    places,
+    places: [],
   });
 
   try {

@@ -3,6 +3,8 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error.js");
 const getCoordsForAddress = require("../util/location.js");
 const Place = require("../models/place-model.js");
+const User = require("../models/user-model.js");
+const { default: mongoose } = require("mongoose");
 
 // Getting a place using a place id
 // METHOD: GET
@@ -26,8 +28,6 @@ const getPlaceById = async (req, res, next) => {
 
   res.status(200).json({ place });
 };
-
-
 
 // Getting places added by specific user using userId
 // METHOD: GET
@@ -54,8 +54,6 @@ const getPlacesByUserId = async (req, res, next) => {
 
   res.json({ places });
 };
-
-
 
 // Creating a place
 // METHOD: POST
@@ -87,8 +85,29 @@ const createPlace = async (req, res, next) => {
     creator,
   });
 
+  let user;
+
   try {
-    await createdPlace.save();
+    user = await User.findById(creator);
+  } catch (error) {
+    return next(
+      new HttpError("Creating place failed, please try again later.", 500)
+    );
+  }
+
+  if (!user) {
+    return next(new HttpError("Failed to find user for provided id.", 404));
+  }
+
+  console.log(user);
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPlace.save({ session: sess });
+    user.places.push(createdPlace);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
   } catch (error) {
     new HttpError("Creating place failed, please try again", 500);
     return next(error);
@@ -96,8 +115,6 @@ const createPlace = async (req, res, next) => {
 
   res.status(201).json({ place: createdPlace });
 };
-
-
 
 // To update a place by id
 // METHOD: PATCH
@@ -134,8 +151,6 @@ const updatePlace = async (req, res, next) => {
 
   res.status(200).json({ place });
 };
-
-
 
 // To delete a place by id
 // METHOD: DELETE
