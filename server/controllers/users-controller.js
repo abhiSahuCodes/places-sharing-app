@@ -42,7 +42,7 @@ const signup = async (req, res, next) => {
   }
 
   if (user) {
-    throw new HttpError("User already exists.", 422);
+    return next(new HttpError("User already exists.", 422));
   }
 
   const createdUser = new User({
