@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 
 const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState();
@@ -23,15 +23,21 @@ const useHttpClient = () => {
 
         const responseData = await response.json();
 
+        activeHttpRequests.current = activeHttpRequests.current.filter(
+          (reqCtrl) => reqCtrl !== httpAbortCtrl
+        );
+
         if (!response.ok) {
           throw new Error(responseData.message);
         }
 
+        setIsLoading(false);
         return responseData;
       } catch (error) {
         setError(error.message || "Something went wrong!!");
+        setIsLoading(false);
+        throw error;
       }
-      setIsLoading(false);
     },
     []
   );
