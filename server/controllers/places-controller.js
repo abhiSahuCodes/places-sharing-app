@@ -55,6 +55,7 @@ const getPlacesByUserId = async (req, res, next) => {
   res.json({ places });
 };
 
+
 // Creating a place
 // METHOD: POST
 const createPlace = async (req, res, next) => {
