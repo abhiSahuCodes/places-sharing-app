@@ -11,7 +11,7 @@ import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 
 
-const PlaceItem = ({ id, image, title, address, description, coordinates, onDelete }) => {
+const PlaceItem = ({ id, image, title, address, description, creatorId, coordinates, onDelete }) => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -98,7 +98,7 @@ const PlaceItem = ({ id, image, title, address, description, coordinates, onDele
               VIEW ON MAP
             </Button>
             {
-              auth.isLoggedIn && (
+              auth.userId === creatorId && (
                 <>
                   <Button to={`/places/${id}`}>EDIT</Button>
                   <Button danger onClick={showDeleteWarningHandler}>
