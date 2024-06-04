@@ -14,6 +14,7 @@ import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 
 const NewPlace = () => {
+  const navigate = useNavigate();
   const { userId } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [formState, inputHandler] = useForm(
@@ -34,7 +35,6 @@ const NewPlace = () => {
     false
   );
 
-  const navigate = useNavigate();
 
   const placeSubmitHandler = async (event) => {
     event.preventDefault();

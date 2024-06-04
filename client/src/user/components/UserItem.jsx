@@ -4,9 +4,9 @@ import Avatar from "../../shared/components/UIElements/Avatar";
 import "./UserItem.css";
 
 const UserItem = ({ id, name, image, placeCount }) => {
-
+  const navigate = useNavigate();
   const handleClick = () => {
-    useNavigate(`/${id}/places`);
+    navigate(`/${id}/places`);
   }
   return (
     <li className="user-item" onClick={handleClick}>
