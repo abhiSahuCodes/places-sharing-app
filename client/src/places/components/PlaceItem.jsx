@@ -5,9 +5,16 @@ import "./PlaceItem.css";
 import Modal from "../.././shared/components/UIElements/Modal";
 import Map from "../../shared/components/UIElements/Map";
 import { AuthContext } from "../../shared/context/auth-context";
+import useHttpClient from "../../shared/hooks/http-hook";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 
-const PlaceItem = ({ id, image, title, address, description, coordinates }) => {
+
+const PlaceItem = ({ id, image, title, address, description, coordinates, onDelete }) => {
+  const navigate = useNavigate();
   const auth = useContext(AuthContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -27,13 +34,21 @@ const PlaceItem = ({ id, image, title, address, description, coordinates }) => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = () => {
-    console.log("Deleting...");
+  const confirmDeleteHandler = async() => {
     setShowConfirmModal(false);
+    try {
+    await sendRequest(`http://localhost:5000/api/places/${id}`, "DELETE")
+      onDelete(id);
+      navigate(`/${auth.userId}/places`);
+    } catch (error) {
+      console.log(error)
+    }
+
   };
 
   return (
     <>
+    <ErrorModal error={error} onClear={clearError} />
       <Modal
         show={showMap}
         onCancel={closeMapHandler}
@@ -69,6 +84,7 @@ const PlaceItem = ({ id, image, title, address, description, coordinates }) => {
       </Modal>
       <li className="place-item">
         <Card className="place-item__content">
+          {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
             <img src={image} alt={title} />
           </div>
