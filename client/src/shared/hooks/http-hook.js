@@ -34,7 +34,11 @@ const useHttpClient = () => {
         setIsLoading(false);
         return responseData;
       } catch (error) {
-        setError(error.message || "Something went wrong!!");
+        if (error.name === 'AbortError') {
+          console.log('Request was aborted:', url);
+        } else {
+          setError(error.message || "Something went wrong!!");
+        }
         setIsLoading(false);
         throw error;
       }
@@ -48,7 +52,9 @@ const useHttpClient = () => {
 
   useEffect(() => {
     return () => {
+      console.log('Cleanup function called');
       activeHttpRequests.current.forEach((abortCtrl) => abortCtrl.abort());
+      console.log('Aborting request');
     };
   }, []);
 

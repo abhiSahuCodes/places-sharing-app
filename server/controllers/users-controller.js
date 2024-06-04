@@ -84,7 +84,7 @@ const login = async (req, res, next) => {
     return next(new HttpError("Invalid password", 404));
   }
 
-  res.status(200).json({ message: "User loggedin", user: { email } });
+  res.status(200).json({ message: "User loggedin", user: existingUser });
 };
 
 exports.getAllUsers = getAllUsers;
