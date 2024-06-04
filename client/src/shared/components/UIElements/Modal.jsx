@@ -1,11 +1,16 @@
 import ReactDOM from "react-dom";
+import { forwardRef, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import Backdrop from "./Backdrop";
 import "./Modal.css";
 
-const ModalOverlay = (props) => {
+const ModalOverlay = forwardRef((props, ref) => {
   const content = (
-    <div className={`modal ${props.className}`} style={props.style}>
+    <div
+      ref={ref}
+      className={`modal ${props.className}`}
+      style={props.style}
+    >
       <header className={`modal__header ${props.headerClass}`}>
         <h2>{props.header}</h2>
       </header>
@@ -24,9 +29,10 @@ const ModalOverlay = (props) => {
     </div>
   );
   return ReactDOM.createPortal(content, document.getElementById("modal-hook"));
-};
+});
 
 const Modal = (props) => {
+  const nodeRef = useRef(null);
   return (
     <>
       {props.show && <Backdrop onClick={props.onCancel} />}
@@ -37,7 +43,7 @@ const Modal = (props) => {
         timeout={200}
         classNames="modal"
       >
-        <ModalOverlay {...props} />
+        <ModalOverlay {...props} ref={nodeRef} />
       </CSSTransition>
     </>
   );
