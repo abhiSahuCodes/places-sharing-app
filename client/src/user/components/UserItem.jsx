@@ -1,11 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "../../shared/components/UIElements/Card";
 import Avatar from "../../shared/components/UIElements/Avatar";
 import "./UserItem.css";
 
 const UserItem = ({ id, name, image, placeCount }) => {
+
+  const handleClick = () => {
+    useNavigate(`/${id}/places`);
+  }
   return (
-    <li className="user-item">
+    <li className="user-item" onClick={handleClick}>
       <Card className="user-item__content">
         <Link to={`/${id}/places`}>
           <div className="user-item__image">
