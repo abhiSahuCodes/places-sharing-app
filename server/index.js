@@ -24,6 +24,9 @@ app.use((req, res, next) => {
     "Origin, X-Requested-With, Content-Type, Access, Authorization"
   );
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  // if(req.method === 'OPTIONS') {
+  //   return res.sendStatus(200);
+  // } OR in the check-auth 
   next();
 });
 

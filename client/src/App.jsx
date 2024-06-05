@@ -20,7 +20,7 @@ const App = () => {
     { path: "/:userId/places", element: <UserPlaces /> },
   ];
 
-  if (auth.isLoggedIn) {
+  if (auth.token) {
     routes = [
       ...routes,
       { path: "/places/new", element: <NewPlace /> },
