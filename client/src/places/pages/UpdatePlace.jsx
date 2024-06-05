@@ -16,7 +16,7 @@ import { AuthContext } from "../../shared/context/auth-context";
 
 const UpdatePlace = () => {
   const navigate = useNavigate();
-  const {userId} = useContext(AuthContext);
+  const {userId, token} = useContext(AuthContext);
   const { isLoading, error, clearError, sendRequest } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
   const placeId = useParams().placeId;
@@ -88,6 +88,7 @@ const UpdatePlace = () => {
         }),
         {
           "Content-Type": "application/json",
+          Authorization: 'Bearer ' + token,
         }
       );
       navigate(`/${userId}/places`);

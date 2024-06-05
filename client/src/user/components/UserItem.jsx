@@ -8,6 +8,7 @@ const UserItem = ({ id, name, image, placeCount }) => {
   const handleClick = () => {
     navigate(`/${id}/places`);
   };
+  console.log(placeCount);
   return (
     <li className="user-item" onClick={handleClick}>
       <Card className="user-item__content">

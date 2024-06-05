@@ -101,7 +101,7 @@ const login = async (req, res, next) => {
   }
 
   if (!existingUser) {
-    return next(new HttpError("User with this email is not found.", 401));
+    return next(new HttpError("User with this email is not found.", 403));
   }
 
   let isValidPassword = false;

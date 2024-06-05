@@ -101,7 +101,6 @@ const createPlace = async (req, res, next) => {
 
   console.log(user);
 
-
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -113,7 +112,6 @@ const createPlace = async (req, res, next) => {
     new HttpError("Creating place failed, please try again", 500);
     return next(error);
   }
-
 
   res.status(201).json({ place: createdPlace });
 };
@@ -133,7 +131,21 @@ const updatePlace = async (req, res, next) => {
   const { title, description } = req.body;
 
   let place;
+
   try {
+    place = await Place.findById(placeId);
+    if (!place) {
+      return next(
+        new HttpError("Could not find a place for the provided id", 404)
+      );
+    }
+
+    if (place.creator.toString() !== req.userData.userId) {
+      return next(
+        new HttpError("You are not allowed to edit this place.", 401)
+      );
+    }
+
     place = await Place.findByIdAndUpdate(
       placeId,
       { title, description },
@@ -172,6 +184,12 @@ const deletePlace = async (req, res, next) => {
   if (!place) {
     return next(
       new HttpError("Could not find a place for the provided id", 404)
+    );
+  }
+
+  if (place.creator.id !== req.userData.userId) {
+    return next(
+      new HttpError("You are not allowed to edit this place.", 401)
     );
   }
 
