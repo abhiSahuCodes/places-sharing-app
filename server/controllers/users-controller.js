@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error");
 const User = require("../models/user-model");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // Get all users
 // METHOD: GET
@@ -69,7 +70,21 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(201).json({ message: "User created", user: createdUser });
+  let token;
+
+  try {
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    return next(new HttpError("Signup failed, please try again later.", 500));
+  }
+
+  res
+    .status(201)
+    .json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 
 // Login a user
@@ -94,14 +109,40 @@ const login = async (req, res, next) => {
   try {
     isValidPassword = await bcrypt.compare(password, existingUser.password);
   } catch (error) {
-    return next(new HttpError("Could not log you in, please check your credentials and try again.", 500));
+    return next(
+      new HttpError(
+        "Could not log you in, please check your credentials and try again.",
+        500
+      )
+    );
   }
 
   if (!isValidPassword) {
-    return next(new HttpError("Could not log you in, please check your password and try again.", 401));
+    return next(
+      new HttpError(
+        "Could not log you in, please check your password and try again.",
+        401
+      )
+    );
   }
 
-  res.status(200).json({ message: "User loggedin", user: existingUser });
+  let token;
+
+  try {
+    token = jwt.sign(
+      { userId: existingUser.id, email: existingUser.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    return next(
+      new HttpError("Logging in failed, please try again later", 500)
+    );
+  }
+
+  res
+    .status(200)
+    .json({ userId: existingUser.id, email: existingUser.email, token: token });
 };
 
 exports.getAllUsers = getAllUsers;
