@@ -45,7 +45,7 @@ const PlaceItem = ({
   const confirmDeleteHandler = async () => {
     setShowConfirmModal(false);
     try {
-      await sendRequest(`http://localhost:5000/api/places/${id}`, "DELETE", null, {
+      await sendRequest(`${import.meta.env.VITE_SERVER_URL}/api/places/${id}`, "DELETE", null, {
         Authorization: `Bearer ${auth.token}`,
       });
       onDelete(id);
@@ -95,7 +95,7 @@ const PlaceItem = ({
         <Card className="place-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img src={`http://localhost:5000/${image}`} alt={title} />
+            <img src={`${import.meta.env.VITE_SERVER_URL}/${image}`} alt={title} />
           </div>
           <div className="place-item__info">
             <h2>{title}</h2>
