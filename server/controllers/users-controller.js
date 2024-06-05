@@ -48,7 +48,7 @@ const signup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image: "https://i.ibb.co/q5zbhJG/prof-place-sharing.png",
+    image: req.file.path,
     password,
     places: [],
   });

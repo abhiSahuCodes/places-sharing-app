@@ -5,6 +5,7 @@ const getCoordsForAddress = require("../util/location.js");
 const Place = require("../models/place-model.js");
 const User = require("../models/user-model.js");
 const { default: mongoose } = require("mongoose");
+const fs = require("fs");
 
 // Getting a place using a place id
 // METHOD: GET
@@ -55,7 +56,6 @@ const getPlacesByUserId = async (req, res, next) => {
   res.json({ places });
 };
 
-
 // Creating a place
 // METHOD: POST
 const createPlace = async (req, res, next) => {
@@ -81,8 +81,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg",
+    image: req.file.path,
     creator,
   });
 
@@ -102,6 +101,7 @@ const createPlace = async (req, res, next) => {
 
   console.log(user);
 
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -113,6 +113,7 @@ const createPlace = async (req, res, next) => {
     new HttpError("Creating place failed, please try again", 500);
     return next(error);
   }
+
 
   res.status(201).json({ place: createdPlace });
 };
@@ -174,6 +175,8 @@ const deletePlace = async (req, res, next) => {
     );
   }
 
+  const imagePath = place.image;
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -186,6 +189,10 @@ const deletePlace = async (req, res, next) => {
       new HttpError("Something went wrong, could not delete the place.", 500)
     );
   }
+
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: "Deleted place." });
 };

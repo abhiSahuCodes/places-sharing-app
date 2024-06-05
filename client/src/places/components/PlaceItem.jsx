@@ -10,8 +10,16 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 
-
-const PlaceItem = ({ id, image, title, address, description, creatorId, coordinates, onDelete }) => {
+const PlaceItem = ({
+  id,
+  image,
+  title,
+  address,
+  description,
+  creatorId,
+  coordinates,
+  onDelete,
+}) => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -34,21 +42,20 @@ const PlaceItem = ({ id, image, title, address, description, creatorId, coordina
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = async() => {
+  const confirmDeleteHandler = async () => {
     setShowConfirmModal(false);
     try {
-    await sendRequest(`http://localhost:5000/api/places/${id}`, "DELETE")
+      await sendRequest(`http://localhost:5000/api/places/${id}`, "DELETE");
       onDelete(id);
       navigate(`/${auth.userId}/places`);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
   };
 
   return (
     <>
-    <ErrorModal error={error} onClear={clearError} />
+      <ErrorModal error={error} onClear={clearError} />
       <Modal
         show={showMap}
         onCancel={closeMapHandler}
@@ -86,7 +93,7 @@ const PlaceItem = ({ id, image, title, address, description, creatorId, coordina
         <Card className="place-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img src={image} alt={title} />
+            <img src={`http://localhost:5000/${image}`} alt={title} />
           </div>
           <div className="place-item__info">
             <h2>{title}</h2>
@@ -97,16 +104,14 @@ const PlaceItem = ({ id, image, title, address, description, creatorId, coordina
             <Button inverse onClick={openMapHandler}>
               VIEW ON MAP
             </Button>
-            {
-              auth.userId === creatorId && (
-                <>
-                  <Button to={`/places/${id}`}>EDIT</Button>
-                  <Button danger onClick={showDeleteWarningHandler}>
-                    DELETE
-                  </Button>
-                </>
-              )
-            }
+            {auth.userId === creatorId && (
+              <>
+                <Button to={`/places/${id}`}>EDIT</Button>
+                <Button danger onClick={showDeleteWarningHandler}>
+                  DELETE
+                </Button>
+              </>
+            )}
           </div>
         </Card>
       </li>
