@@ -3,14 +3,17 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import Users from "./user/pages/Users";
-import NewPlace from "./places/pages/NewPlace";
+import React, { lazy, Suspense } from "react";
 import RootLayout from "./RootLayout";
-import UserPlaces from "./places/pages/UserPlaces";
-import UpdatePlace from "./places/pages/UpdatePlace";
-import Auth from "./user/pages/Auth";
 import { AuthContext } from "./shared/context/auth-context.jsx";
 import { useContext, useEffect, useRef } from "react";
+import LoadingSpinner from "./shared/components/UIElements/LoadingSpinner.jsx";
+
+const Users = lazy(() => import("./user/pages/Users"));
+const NewPlace = lazy(() => import("./places/pages/NewPlace.jsx"));
+const UserPlaces = lazy(() => import("./places/pages/UserPlaces"));
+const UpdatePlace = lazy(() => import("./places/pages/UpdatePlace"));
+const Auth = lazy(() => import("./user/pages/Auth"));
 
 const App = () => {
   const auth = useContext(AuthContext);
@@ -41,9 +44,9 @@ const App = () => {
       clearTimeout(logoutTimer.current);
     }
 
-    return() => {
+    return () => {
       clearTimeout(logoutTimer.current);
-    }
+    };
   }, [auth.token, auth.logout, auth.tokenExpirationDate]);
 
   let routes = [
@@ -73,7 +76,17 @@ const App = () => {
       children: routes,
     },
   ]);
-  return <RouterProvider router={router} />;
+  return (
+    <Suspense
+      fallback={
+        <p className="center">
+          <LoadingSpinner />
+        </p>
+      }
+    >
+      <RouterProvider router={router} />
+    </Suspense>
+  );
 };
 
 export default App;
