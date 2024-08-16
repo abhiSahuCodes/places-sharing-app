@@ -46,3 +46,33 @@ This is a full-stack MERN application that allows users to share and explore pla
   * JWT tokens are used for authentication and authorization.
   
   * Geolocation data is fetched from Nominatim OpenStreetMap API.
+
+## Tech
+
+* For Client Side
+  * React.js
+    * Open Layers Mapping Library - For creating maps
+    * React Router Dom - To navigate to different pages and links
+    * React Transition Group - For transitions
+
+* For Server Side
+  * Node.js - For javascript runtime environment to execute outside browser.
+
+  * Express.js - To simplify routing, handle middleware, controllers and manage HTTP requests/responses.
+
+  * MongoDB - It is the No-SQL database used here.
+
+  * Mongoose - For schema-based solution for modeling data, validation, and querying MongoDB.
+
+  * Mongoose Unique Validator - For ensuring unique values in Mongoose schema fields, providing custom error messages for duplicate entries.
+
+  * Axios - For making HTTP requests and handling responses in a promise-based manner.
+
+  * Express Validator - For validating and sanitizing user input in Express.js applications.
+
+  * JSON Web Token - For generating and verifying JSON Web Tokens (JWTs) for authentication and authorization.
+
+  * Multer - For handling file uploads and multipart form-data in Express.js applications.
+
+  * UUID - For generating unique identifiers to ensure distinct filenames or IDs in file uploads
+
