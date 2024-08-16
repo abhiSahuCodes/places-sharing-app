@@ -10,6 +10,7 @@ const usersRoutes = require("./routes/users-routes.js");
 const HttpError = require("./models/http-error.js");
 
 const app = express();
+app.use(cors());
 
 // Parsing data
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use(express.json());
 // Middlewares
 
 app.use('/uploads/images', express.static(path.join('uploads', 'images')))
+
 
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -31,19 +33,7 @@ app.use('/uploads/images', express.static(path.join('uploads', 'images')))
 //   next();
 // });
 
-const allowedOrigins = ['https://placeshare.vercel.app'];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 // Route Middleware
 app.use("/api/places", placesRoutes);
