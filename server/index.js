@@ -31,8 +31,16 @@ app.use('/uploads/images', express.static(path.join('uploads', 'images')))
 //   next();
 // });
 
+const allowedOrigins = ['https://placeshare.vercel.app'];
+
 app.use(cors({
-  origin: 'https://your-vercel-app.vercel.app',
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
