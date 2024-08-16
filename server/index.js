@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
 
 const placesRoutes = require("./routes/places-routes.js");
 const usersRoutes = require("./routes/users-routes.js");
@@ -17,18 +18,24 @@ app.use(express.json());
 
 app.use('/uploads/images', express.static(path.join('uploads', 'images')))
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Access, Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
-  // if(req.method === 'OPTIONS') {
-  //   return res.sendStatus(200);
-  // } OR in the check-auth 
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Access, Authorization"
+//   );
+//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+//   // if(req.method === 'OPTIONS') {
+//   //   return res.sendStatus(200);
+//   // } OR in the check-auth 
+//   next();
+// });
+
+app.use(cors({
+  origin: 'https://your-vercel-app.vercel.app',
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Route Middleware
 app.use("/api/places", placesRoutes);
