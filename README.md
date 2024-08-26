@@ -2,7 +2,6 @@
 
 This is a full-stack MERN application that allows users to share and explore places. The app offers user authentication, allowing users to sign up, log in, and manage their own place listings. Unauthenticated users can browse places shared by others, while authenticated users can add, edit, and delete their own places. The app also integrates map functionality to show the location of each place based on its address.
 
-[Live Demo](https://placeshare.vercel.app/)
 
 ## Features
 
